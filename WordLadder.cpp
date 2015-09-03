@@ -1,64 +1,47 @@
 #include <iostream>
 #include <vector>
 #include <unordered_set>
+#include <queue>
 using namespace std;
 vector<int> length;
-    int stringLength;
-    
-    
-    void find(string start, string end, unordered_set<string> &dict, int n, unordered_set<string> &checked) {
-        if(start == end){
-            length.push_back(n);
-            checked.clear();
-            return;
-        }
-        if(checked.find(start) != checked.end()){
-            return;
-        }
-        checked.insert(start);
-        for(int i = 0;i < stringLength;i ++){
-            string tempResult = start;
-            for(char x = 'a';x <= 'z';x ++){
-                if(x == start[i]){
-                    continue;
+    int ladderLength(string beginWord, string endWord, unordered_set<string>& wordDict) {
+        int level;
+        queue<pair<string, int> > que;
+        que.push(make_pair(beginWord, 1));
+        if(!wordDict.count(endWord)) wordDict.insert(endWord);
+        while(!que.empty()) {
+            string currWord = que.front().first;
+            level = que.front().second;
+            que.pop();
+            for(int i = 0;i < currWord.size();i ++) {
+                char temp = currWord[i];
+                for(char j = 'a';j <= 'z';j ++) {
+                    currWord[i] = j;
+                    if(wordDict.count(currWord)) {
+                        que.push(make_pair(currWord, level + 1));
+                        wordDict.erase(currWord);
+                    }
                 }
-                tempResult.replace(i, 1, 1, x);
-                if(dict.find(tempResult) != dict.end() && checked.find(tempResult) == checked.end()){
-                    cout<<tempResult<<endl;
-
-                    find(tempResult, end, dict, n + 1, checked);
-                }
+                currWord[i] = temp;
             }
+            if(!wordDict.count(endWord)) return (level + 1);
         }
-    }
-    
-    int ladderLength(string start, string end, unordered_set<string> &dict) {
-        stringLength = start.size();
-        unordered_set<string> checked;
-        find(start, end, dict, 1, checked);
-        int min = 0;
-        for(int i = 0;i < length.size();i ++){
-            if(min == 0){
-                min = length[i];
-            }
-            if(min > length[i]){
-                min = length[i];
-            }
-        }
-        return min;
+        return 0;
     }
     
 int main(){
-    string start = "hot";
-    string end = "dog";
+    string start = "hit";
+    string end = "cog";
     unordered_set<string> dict;
     dict.insert("hot");
     dict.insert("dog");
-    dict.insert("cog");
-    dict.insert("tot");
-    dict.insert("hog");
-    dict.insert("hop");
-    dict.insert("pot");
+    dict.insert("log");
+    //dict.insert("cog");
+    //dict.insert("tot");
+    dict.insert("lot");
+    //dict.insert("hog");
+    //dict.insert("hop");
+    //dict.insert("pot");
     dict.insert("dot");    
     cout<<ladderLength(start, end, dict)<<endl;
     return 0;

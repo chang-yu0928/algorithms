@@ -1,54 +1,39 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stack>
 using namespace std;
 
 string simplifyPath(string path) {
-	int i;
-	string result;
-	stack<string> folders;
-	result = path;
-	string folderName;
-	for(int i = 0;i < result.size();i ++){
-		if(result[i] == '/'){
-			if(folderName.size() != 0 && folderName != "."){
-				if(folderName != ".."){
-					folders.push(folderName);
-				}else{
-					if(folders.size() > 0){
-    					folders.pop();
-    				}
-				}
+	int prev = 0, len = path.size();
+	string result("/");
+	vector<string> folders;
+	if(path[len - 1] != '/') {
+		path += '/';
+	}
+	for(int i = 1;i < path.size();i ++) {
+		if(path[i] == '/') {
+			string f = path.substr(prev + 1, i - prev - 1);
+			prev = i;
+			if(f == "..") {
+				if(!folders.empty())
+					folders.pop_back();
+				continue;
 			}
-			folderName.clear();
-		}else{
-			folderName += result[i];
+			if(f != "." && (f.size() != 0)) {
+				folders.push_back(f);
+			}
 		}
 	}
-	if(folderName.size() != 0 && folderName != "."){
-		if(folderName != ".."){
-			folders.push(folderName);
-		}else{
-			if(folders.size() > 0){
-    			folders.pop();
-    		}
-		}
+	for(int i = 0;i < folders.size();i ++) {
+		result += folders[i];
+		result += "/";
 	}
-	result.clear();
-	if(!folders.empty()){
-		result = folders.top();
-		folders.pop();
-		while(!folders.empty()){
-			result = folders.top() + "/" + result;
-			folders.pop();
-		}
-	}
-	result = "/" + result;
+	if(!folders.empty())
+		result.erase(result.end()-1);
 	return result;
 }
 
 int main(){
-	cout<<simplifyPath("/.")<<endl;
+	cout<<simplifyPath("/a/./b/../../c/")<<endl;
 	return 0;
 }

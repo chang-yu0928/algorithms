@@ -1,40 +1,38 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
-int trap(int A[], int n) {
-        int index1 = 0;
-        int result = 0;
-        bool flag = true;
-        for(int i = 0;i < n;i ++){
-            if(flag && i == 0 && A[i] > A[i+1]){
-                flag = false;
-                index1 = i;
-            }else if(flag && A[i] > A[i+1] && A[i] >= A[i-1]){
-                flag = false;
-                index1 = i;
-            }else if(!flag && i == n-1 && A[i] > A[i-1]){
-                int temp = min(A[index1], A[i]);
-                for(int j = index1 + 1;j < i;j ++){
-                    if(temp-A[j] > 0){
-                        result += temp - A[j];
+    int trap(vector<int> &height) {
+        int len = height.size();
+        if(len == 0) {
+            return 0;
+        }
+        int prev = 0, back = len - 1, result = 0;
+        while(prev < back) {
+            if(height[prev] < height[back]) {
+                for(int i = prev + 1;i <= back;i ++) {
+                    if(height[i] >= height[prev]) {
+                        prev = i;
+                        break;
                     }
+                    result += height[prev] - height[i];
                 }
-            }else if(!flag && A[i] >= A[i+1] && A[i] > A[i-1]){
-                int temp = min(A[index1], A[i]);
-                for(int j = index1 + 1;j < i;j ++){
-                    if(temp-A[j] > 0){
-                        result += temp - A[j];
+            } else {
+                for(int i = back - 1;i >= prev;i --) {
+                    if(height[i] >= height[back]) {
+                        back = i;
+                        break;
                     }
+                    result += height[back] - height[i];
                 }
-                flag = true;
             }
         }
-        cout<<index1<<endl;
         return result;
     }
     
 int main(){
-    int A[6]={5,2,1,2,1,5};
-    cout<<trap(A,6)<<endl;
+    int A[12]={0,1,0,2,1,0,1,3,2,1,2,1};
+    vector<int> height(A, A + sizeof(A) / sizeof(int));
+    cout<<trap(height)<<endl;
     return 0;
 }

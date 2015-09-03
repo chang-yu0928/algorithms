@@ -4,32 +4,43 @@ using namespace std;
 
 vector<vector<int> > threeSum(vector<int> &num) {
         vector<vector<int> > result;
-        if(num.size() < 3){
-            return result;
-        }
         sort(num.begin(), num.end());
-        for(int i = 0;i < num.size();){
-            int n = num[i];
-            for(int j = i + 1;j < num.size();){
-                int m = num[j];
-                for(int k = j + 1;k < num.size();k ++){
-                    if(n + m + num[k] == 0){
-                        vector<int> temp;
-                        temp.push_back(m);
-                        temp.push_back(n);
-                        temp.push_back(num[k]);
-                        result.push_back(temp);
+        for(int i = 0;i < num.size();i ++){
+            int front = i+1;
+            int back = num.size()-1;
+            while(front < back){
+                int temp = num[i]+num[front]+num[back];
+                if(temp == 0){
+                    vector<int> resultPart;
+                    resultPart.push_back(num[i]);
+                    resultPart.push_back(num[front]);
+                    resultPart.push_back(num[back]);
+                    result.push_back(resultPart);
+                    front ++;
+                    while(num[front-1] == num[front] && front < num.size()){
+                        front ++;
+                    }
+                    back --;
+                    while(num[back] == num[back+1] && back >= 0){
+                        back --;
+                    }
+                }else if(temp < 0){
+                    front ++;
+                    while(num[front-1] == num[front] && front < num.size()){
+                        front ++;
+                    }
+                }else{
+                    back --;
+                    while(num[back] == num[back+1] && back >= 0){
+                        back --;
                     }
                 }
-                do{
-                    j += 1;
-                }while(j < num.size() && num[j] == m);
             }
-            do{
-                i += 1;
-            }while(i < num.size() && num[i] == n);
+            while(num[i] == num[i+1] && i < num.size()){
+                i ++;
+            }
         }
-        return result;    
+        return result;
     }
     
     
@@ -40,7 +51,7 @@ int main(){
     temp.push_back(-1);
     temp.push_back(2);
     temp.push_back(-1);
-    temp.push_back(4);
+    temp.push_back(-4);
     vector<vector<int> > result = threeSum(temp);
     for(int i = 0;i < result.size();i ++){
         for(int j = 0; j < result[i].size();j ++){

@@ -1,87 +1,61 @@
 #include <iostream>
 using namespace std;
+
 struct ListNode {
-    int val;
+    int val; 
     ListNode *next;
     ListNode(int x) : val(x), next(NULL) {}
 };
-    ListNode *partition(ListNode *head, ListNode *tail){
-        ListNode *temp = head->next;
-        ListNode *end;
-        if(tail == NULL){
-            end = NULL;
-        }else{
-            end = tail->next;
-        }
-        cout<<"partition0:"<<head->val<<endl;
-        ListNode *tempHead, *tempTailHead, *tempTail;
-        int flag1 = 0,flag2 = 0;
-        while(temp != tail){
-            if(temp->val < head->val){
-                if(flag1 == 0){
-                    tempHead = temp;
-                    flag1 = 1;
-                }else{
-                    tempHead->next = temp;
-                    tempHead = temp;
-                }
-            }else{
-                if(flag2 == 0){
-                    tempTailHead = temp;
-                    tempTail = temp;
-                    flag2 = 1;
-                }else{
-                    tempTail->next = temp;
-                    tempTail = temp;
-                }
+
+    ListNode* combine(ListNode* list1, ListNode* list2) {
+        ListNode* dummy = new ListNode(0), *tail = dummy;
+        while(list1 && list2) {
+            if(list1->val > list2->val) {
+                tail->next = list2;
+                list2 = list2->next;
+            } else {
+                tail->next = list1;
+                list1 = list1->next;
             }
-            temp = temp->next;
-            cout<<"partition:"<<temp->val<<endl;
+            tail = tail->next;
         }
-        tempTail->next = end;
-        tempHead->next = head;
-        head->next = tempTailHead;
-        return head;
+        while(list1) {
+            tail->next = list1;
+            list1 = list1->next;
+            tail = tail->next;
+        }
+        while(list2) {
+            tail->next = list2;
+            list2 = list2->next;
+            tail = tail->next;
+        }
+        return dummy->next;
     }
-    ListNode *quickSort(ListNode *head, ListNode *tail){
-        if(head == NULL || head == tail){
-            return head;
+
+    ListNode* sortList(ListNode* head) {
+        if(!head || !head->next) return head;
+        ListNode* fast = head, *slow = head, *prev, *list1, *list2;
+        while(fast && fast->next) {
+            fast = fast->next->next;
+            prev = slow;
+            slow = slow->next;
         }
-        if(head->next == tail){
-            if(head->val > tail->val){
-                ListNode *temp = head;
-                head = tail;
-                head->next = 
-            }
-        }
-        ListNode *pin = partition(head, tail);
-        quickSort(head, pin);
-        pin = pin->next;
-        quickSort(pin, tail);
-        return pin;
+        prev->next = NULL;
+        list1 = sortList(head);
+        list2 = sortList(slow);
+        return combine(list1, list2);
     }
-    ListNode *sortList(ListNode *head) {
-        if(head == NULL || head->next == NULL){
-            return head;
-        }
-        ListNode *newHead = head, *temp = head;
-        while(temp != NULL){
-            if(temp->val < newHead->val){
-                newHead = temp;
-            }
-            temp = temp->next;
-        }
-        quickSort(head, NULL);
-        return newHead;
-    }
-     
-    
     
 
+
 int main(){
-    ListNode *head = new ListNode(2);
-    ListNode *temp = new ListNode(1);
-    head->next = temp;
-    cout<<sortList(head)->val<<endl;
-    return 0;
+	ListNode *node = new ListNode(2);
+	node->next = new ListNode(1);
+	ListNode *result = sortList(node);
+	while(result){
+		cout<<result->val<<" ";
+		result = result->next;
+	}
+	cout<<endl;
+	return 0;
 }

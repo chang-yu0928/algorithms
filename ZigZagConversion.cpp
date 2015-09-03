@@ -1,43 +1,37 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 using namespace std;
-string convert(string s, int nRows) {
-        int length = s.size();
-        string result;
-        if(length == 0 || nRows == 0){
-            return result;
+string convert(string s, int numRows) {
+        stringstream result;
+        int step = 2 * numRows - 2, len = s.size(), step1, step2, index;
+        if(step == 0) return s;
+        index = 0;
+        while(index < len) {
+            result << s[index];
+            index += step;
         }
-        if(nRows%2 != 0){
-            for(int i = 0;i < nRows;i ++){
-                if(i != nRows/2){
-                    int k = 0;
-                    while((i + k * (nRows+1)) < length){
-                        result += s[i + k * (nRows+1)];
-                        k ++;
-                    }
-                }else{
-                    int step = nRows - nRows/2;
-                    int k = 0;
-                    while((i + k * step) < length){
-                        result += s[i + k * step];
-                        k++;
-                    }
-                }
-            }
-        }else{
-            for(int i = 0;i < nRows;i ++){
-                int k = 0;
-                while((i + k * nRows) < length){
-                    result += s[i + k * nRows];
-                    k ++;
-                }
+        for(int i = 1;i < numRows - 1;i ++) {
+            step1 = step - 2 * i;
+            step2 = i * 2;
+            index = i;
+            while(index < len) {
+                result << s[index];
+                index += step1;
+                if(index < len) result << s[index];
+                index += step2;
             }
         }
-        return result;
+        index = numRows - 1;
+        while(index < len) {
+            result << s[index];
+            index += step;
+        }
+        return result.str();
     }
     
 int main(){
-    string s("ABC");
-    cout<<convert(s, 2)<<endl;
+    string s("PAYPALISHIRING");
+    cout<<convert(s, 3)<<endl;
     return 0;
 }

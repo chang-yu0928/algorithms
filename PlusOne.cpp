@@ -2,23 +2,25 @@
 #include <vector>
 using namespace std;
 
-vector<int> plusOne(vector<int> &digits) {
-        vector<int> result(digits.size());
-        int add = 1;
-        for(int i = digits.size() - 1;i >= 0;i ++){
-            if(digits[i] == 1 && add == 1){
-                add = 1;
-                result[i] = 0;
-            }else if(digits[i] == 0 && add == 1){
-                add = 0;
-                result[i] = 1;
-            }else{
-                result[i] = digits[i];
-            }
+vector<int> plusOne(vector<int>& digits) {
+        int carry = 1;
+        for(int i = digits.size() - 1;i >= 0;i --) {
+            digits[i] += carry;
+            carry = digits[i] / 10;
+            digits[i] = digits[i] % 10;
+            if(!carry) break;
         }
-        return result;
+        if(carry) digits.insert(digits.begin(), carry);
+        return digits;
     }
     
 int main(){
-    
+    vector<int> digits(1);
+    digits[0] = 9;
+    vector<int> result = plusOne(digits);
+    for(int i = 0;i < result.size();i ++) {
+        cout<<result[i]<<" ";
+    }
+    cout<<endl;
+    return 0;
 }

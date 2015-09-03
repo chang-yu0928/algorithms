@@ -1,45 +1,16 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 using namespace std;
-    int minimumTotal(vector<vector<int> > &triangle) {
-        vector<vector<int> > minLevel;
-        for(int n = 0;n < triangle.size();n ++){
-            vector<int> temp;
-            if(n == 0){
-                temp.push_back(triangle[n][n]);
-            }else{
-                for(int i = 0;i < triangle[n].size();i ++){
-                    int left = 0, right = 0;
-                    bool flagLeft = false, flagRight = false;
-                    if(i <= n - 1){
-                        right = triangle[n][i] + minLevel[n-1][i];
-                        flagRight = true;
-                    }
-                    if(i - 1 >= 0){
-                        left = triangle[n][i] + minLevel[n-1][i-1];
-                        flagLeft = true;
-                    }
-                    if(!flagLeft){
-                        temp.push_back(right);
-                    }else if(!flagRight){
-                        temp.push_back(left);
-                    }else if(left > right){
-                        temp.push_back(right);
-                    }else{
-                        temp.push_back(left);
-                    }
-                }
-            }
-            minLevel.push_back(temp);
-        }
-        int min = minLevel[minLevel.size() - 1][0];
-        for(int i = 0;i < minLevel[minLevel.size() - 1].size();i ++){
-            if(minLevel[minLevel.size() - 1][i] < min){
-                min = minLevel[minLevel.size() - 1][i];
+    int minimumTotal(vector<vector<int> >& triangle) {
+        int len = triangle.size();
+        vector<int> sum(triangle[len - 1]);
+        for(int i = len - 2;i >= 0;i --) {
+            for(int j = 0;j <= i;j ++) {
+                sum[j] = triangle[i][j] + min(sum[j], sum[j+1]);
             }
         }
-        cout<<minLevel[0][0]<<"\n"<<minLevel[1][0]<<" "<<minLevel[1][1]<<"\n"<<minLevel[2][0]<<" "<<minLevel[2][1]<<" "<<minLevel[2][2]<<endl;
-        return min;
+        return sum[0];
     }
 
 int main(){
