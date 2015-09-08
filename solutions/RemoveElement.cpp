@@ -1,30 +1,23 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
-int removeElement(int A[], int n, int elem) {
-        int tail = n - 1;
-        for(int i = 0;i < n;i ++){
-            if(A[i] == elem){
-                while(A[tail] == elem){
-                    tail --;
-                }
-                if(tail == -1){
-                    return 0;
-                }else{
-                    if(i < tail){
-                    	A[i] = A[tail];
-                        n = tail;
-                        tail --;
-                        cout<<tail<<endl;
-                    }
-                }
+int removeElement(vector<int>& nums, int val) {
+        int pos = nums.size() - 1, i = 0;
+        while(i <= pos) {
+            if(nums[i] == val) {
+                swap(nums[i], nums[pos]);
+                pos --;
+            } else {
+                i ++;
             }
         }
-        return tail+1;
+        return (pos + 1);
     }
     
 int main(){
-	int A[2] = {4,5};
-	cout<<removeElement(A, 2, 4)<<endl;
+	int A[] = {1};
+    vector<int> nums(A, A + sizeof(A)/sizeof(int));
+	cout<<removeElement(nums, 1)<<endl;
 	return 0;
 }

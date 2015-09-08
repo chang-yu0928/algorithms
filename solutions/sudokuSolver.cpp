@@ -1,48 +1,48 @@
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 using namespace std;
 
-bool solveSudoku(vector<vector<char> > &board, vector<vector<bool> > &rows, vector<vector<bool> > &cols, vector<vector<bool> > &mat, int i, int j) {
-	if(j == 9) {
-		j = 0;
-		i ++;
-	}
-	if(i == 9) {
-		return true;
-	}
-	if(board[i][j] != '.'){
-		if(solveSudoku(board, rows, cols, mat, i, j + 1)) return true;
-	} else {
-		int index = (i/3) * 3 + (j/3);
-		for(int k = 1;k < 10;k ++) {
-			if(rows[i][k] && cols[j][k] && mat[index][k]) {
-				board[i][j] = k + '0';
-				rows[i][k] = false;
-    			cols[j][k] = false;
-    			mat[index][k] = false;
-    			if(solveSudoku(board, rows, cols, mat, i, j + 1)) return true;
-    			rows[i][k] = true;
-    			cols[j][k] = true;
-    			mat[index][k] = true;
-    			board[i][j] = '.';
-			}
-		}
-	}
-	return false;
-}
-
-void solveSudoku(vector<vector<char> >& board) {
-        vector<vector<bool> > rows(9, vector<bool>(10, true)), cols(9, vector<bool>(10, true)), mat(9, vector<bool>(10, true));
-        for(int i = 0;i < 9;i ++) {
-        	for(int j = 0;j < 9;j ++) {
-        		if(board[i][j] != '.') {
-        			rows[i][board[i][j] - '0'] = false;
-        			cols[j][board[i][j] - '0'] = false;
-        			mat[(i/3) * 3 + (j/3)][board[i][j] - '0'] = false;
-        		}
-        	}
+bool solveSudoku(vector<vector<char> >& board, vector<vector<bool> > &cols, vector<vector<bool> > &rows, vector<vector<bool> > &mats, int i, int j) {
+        if(j == 9) {
+            j = 0;
+            i ++;
         }
-        solveSudoku(board, rows, cols, mat, 0, 0);
+        if(i == 9) return true;
+        if(board[i][j] != '.') return solveSudoku(board, cols, rows, mats, i, j + 1);
+        else {
+            int m = (i/3) * 3 + (j/3);
+            for(int n = 1;n <= 9;n ++) {
+                if(!rows[i][n] && !cols[j][n] && !mats[m][n]) {
+                    cols[j][n] = true;
+                    rows[i][n] = true;
+                    mats[m][n] = true;
+                    board[i][j] = (n + '0');
+                    if(solveSudoku(board, cols, rows, mats, i, j + 1)) return true;
+                    board[i][j] = '.';
+                    cols[j][n] = false;
+                    rows[i][n] = false;
+                    mats[m][n] = false;
+                }
+            }
+        }
+        return false;
+    }
+
+    void solveSudoku(vector<vector<char> >& board) {
+        vector<vector<bool> > cols(9, vector<bool>(10)), rows(9, vector<bool>(10)), mats(9, vector<bool>(10));
+        int x;
+        for(int i = 0;i < board.size();i ++) {
+            for(int j = 0;j < board[i].size();j ++) {
+                if(board[i][j] != '.') {
+                    x = board[i][j] - '0';
+                    cols[j][x] = true;
+                    rows[i][x] = true;
+                    mats[(i/3) * 3 + (j/3)][x] = true;
+                }
+            }
+        }
+        solveSudoku(board, cols, rows, mats, 0, 0);
     }
     
     int main() {

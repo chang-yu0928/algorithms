@@ -1,49 +1,56 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
 #include <unordered_set>
+#include <unordered_map>
 using namespace std;
 
-int minLevel;
-void findLadders(string start, string end, unordered_set<string> &dict, vector<string> &part, vector<vector<string> > &result, int level) {
-        vector<string> vec;
-        for(int i = 0;i < start.size();i ++) {
-            char temp = start[i];
-            for(char a = 'a';a <= 'z';a ++) {
-                start[i] = a;
-                if(dict.count(start)) {
-                    dict.erase(start);
-                    vec.push_back(start);
-                }
-            }
-            start[i] = temp;
-        }
-        if(!dict.count(end)) {
-            part.push_back(end);
-            result.push_back(part);
-            part.pop_back();
-            minLevel = level;
-        }
-        if(minLevel == -1 || level < minLevel) {
-            for(int i = 0;i < vec.size();i ++) {
-                part.push_back(vec[i]);
-                findLadders(vec[i], end, dict, part, result, level + 1);
+    void generate(string start, vector<string> &input, vector<vector<string> > &result, vector<string> &part, unordered_map<string, vector<string> > mp) {
+        for(int i = 0;i < input.size();i ++) {
+            if(input[i] == start) {
+                part.push_back(start);
+                reverse(part.begin(), part.end());
+                result.push_back(part);
                 part.pop_back();
+                return;
             }
-        }
-        for(int i = 0;i < vec.size();i ++) {
-            dict.insert(vec[i]);
+            part.push_back(input[i]);
+            generate(start, mp[input[i]], result, part, mp);
+            part.pop_back();
         }
     }
 
     vector<vector<string> > findLadders(string start, string end, unordered_set<string> &dict) {
-        minLevel = -1;
-        vector<string> part;
+        int level, maxLevel = INT_MAX;
+        unordered_map<string, vector<string> > mp;
+        queue<pair<string, int> > que;
         vector<vector<string> > result;
-        part.push_back(start);
-        if(dict.count(start)) dict.erase(start);
+        vector<string> part;
+        que.push(make_pair(start, 1));
         if(!dict.count(end)) dict.insert(end);
-        findLadders(start, end, dict, part, result, 0);
+        while(!que.empty()) {
+            string currWord = que.front().first;
+            level = que.front().second;
+            if(level > maxLevel) break;
+            que.pop();
+            for(int i = 0;i < currWord.size();i ++) {
+                string temp = currWord;
+                for(char j = 'a';j <= 'z';j ++) {
+                    currWord[i] = j;
+                    if(dict.count(currWord)) {
+                        if(currWord == end) maxLevel = level;
+                        mp[currWord].push_back(temp);
+                        que.push(make_pair(currWord, level + 1));
+                        if(currWord != end) dict.erase(currWord);
+                    }
+                }
+                currWord = temp;
+            }
+        }
+        vector<string> x;
+        x.push_back(end);
+        generate(start, x, result, part, mp);
         return result;
     }
     
