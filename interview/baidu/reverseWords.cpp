@@ -20,3 +20,10 @@ void reverseWords(string &s) {
     else s.erase(i-1, 1);
     reverse(s.begin(), s.end());
 }
+
+int main() {
+    string s("a bfds cda se");
+    reverseWords(s);
+    cout<<s<<endl;
+    return 0;
+}

@@ -12,6 +12,6 @@ double myPow(double x, int n) {
     }
     
     int main() {
-    	cout<<myPow(8.88023, 3)<<endl;
+    	cout<<myPow(1.00001, 123456)<<endl;
     	return 0;
     }
